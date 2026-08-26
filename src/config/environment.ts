@@ -23,3 +23,11 @@ export const databaseConfig = {
   password: process.env.DB_PASSWORD || 'postgres',
   max: parseInt(process.env.DB_POOL_MAX || '20', 10),
 } as const;
+
+/**
+ * JWT configuration
+ */
+export const jwtConfig = {
+  secret: process.env.JWT_SECRET,
+  expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+} as const;
