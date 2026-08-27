@@ -31,6 +31,14 @@ export interface RegisterRequest {
 }
 
 /**
+ * User login request body
+ */
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+/**
  * Authentication response with user and token
  */
 export interface AuthResponse {

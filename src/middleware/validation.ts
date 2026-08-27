@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { RegisterRequest } from '../types/auth.types';
+import { RegisterRequest, LoginRequest } from '../types/auth.types';
 
 /**
  * Email validation regex
@@ -61,6 +61,58 @@ export function validateRegistration(
     errors.push('Name is required');
   } else if (name.length > 255) {
     errors.push('Name must not exceed 255 characters');
+  }
+
+  // If there are validation errors, return 400
+  if (errors.length > 0) {
+    res.status(400).json({
+      success: false,
+      error: 'Validation failed',
+      errors,
+    });
+    return;
+  }
+
+  next();
+}
+
+/**
+ * Validation middleware for user login
+ * Validates email format and password presence
+ */
+export function validateLogin(
+  req: Request,
+  res: Response,
+  next: NextFunction
+): void {
+  const { email, password } = req.body as Partial<LoginRequest>;
+
+  const errors: string[] = [];
+
+  // Validate email
+  if (!email) {
+    errors.push('Email is required');
+  } else {
+    // Normalize email: trim whitespace and convert to lowercase
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Update the request body with normalized email
+    req.body.email = normalizedEmail;
+
+    // Check email length
+    if (normalizedEmail.length > MAX_EMAIL_LENGTH) {
+      errors.push(`Email must not exceed ${MAX_EMAIL_LENGTH} characters`);
+    }
+
+    // Validate email format
+    if (!EMAIL_REGEX.test(normalizedEmail)) {
+      errors.push('Email must be a valid email address');
+    }
+  }
+
+  // Validate password
+  if (!password) {
+    errors.push('Password is required');
   }
 
   // If there are validation errors, return 400
