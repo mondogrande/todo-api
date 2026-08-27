@@ -30,4 +30,5 @@ export interface ApiResponse<T> {
   data?: T;
   count?: number;
   error?: string;
+  errors?: string[];
 }
